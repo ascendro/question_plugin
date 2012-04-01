@@ -9,9 +9,6 @@ require 'question_journal_hooks'
 require 'dispatcher'
 
 Dispatcher.to_prepare :question_plugin do
-
-  require_dependency 'journal_observer'
-  JournalObserver.send(:include, QuestionPlugin::Patches::JournalObserverPatch)
   require_dependency 'issue'
   Issue.send(:include, QuestionIssuePatch) unless Issue.included_modules.include? QuestionIssuePatch
 
@@ -37,4 +34,5 @@ Redmine::Plugin.register :question_plugin do
 
 end
 
+ActiveRecord::Base.observers << :journal_questions_observer
 require 'question_plugin/hooks/view_user_kanbans_show_contextual_top_hook'

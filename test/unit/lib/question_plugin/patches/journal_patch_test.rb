@@ -8,11 +8,7 @@ class QuestionJournalPatchTest < ActionController::TestCase
     should_have_one :question
 
     should "destroy the question when the Journal is destroyed" do
-      project = Project.generate!
-      issue = Issue.generate_for_project!(project)
-      issue.journal_notes = "Test"
-      assert issue.save
-      journal = issue.journals.last
+      journal = Journal.generate!
       assert journal.valid?
 
       question = Question.generate!(:journal => journal, :issue => journal.issue)

@@ -11,9 +11,7 @@ class QuestionIssueHooksTest < ActionController::IntegrationTest
     @user2 = User.generate!(:firstname => 'Test', :lastname => 'two')
     @project = Project.generate!.reload
     @issue = Issue.generate_for_project!(@project)
-    @issue.journal_notes = "A note"
-    assert @issue.save
-    @journal = @issue.journals.last
+    @journal = Journal.generate!(:issue => @issue)
     User.add_to_project(@user1, @project, Role.generate!(:permissions => [:view_issues, :add_issues, :edit_issues]))
   end
   
@@ -101,12 +99,10 @@ class QuestionIssueHooksTest < ActionController::IntegrationTest
     setup do
       @project = Project.generate!
       @issue = Issue.generate_for_project!(@project)
-      @question = Question.new(:author => @user1, :assigned_to => @user1, :opened => true, :issue => @issue)
-      @issue.journal_notes = "A note"
-      @issue.extra_journal_attributes = { :question => @question }
-      assert @issue.save
-      @journal = @issue.journals.last
+      @journal = Journal.generate!(:issue => @issue)
       User.add_to_project(@user1, @project, Role.generate!(:permissions => [:view_issues, :add_issues, :edit_issues]))
+
+      @question = Question.generate!(:assigned_to => @user1, :opened => true, :journal => @journal)
       
       login_as
       visit_issue_page(@issue)
@@ -135,9 +131,7 @@ class QuestionIssueHooksTest < ActionController::IntegrationTest
     setup do
       @project = Project.generate!
       @issue = Issue.generate_for_project!(@project)
-      @issue.journal_notes = "A note"
-      assert @issue.save
-      @journal = @issue.journals.last
+      @journal = Journal.generate!(:issue => @issue)
       User.add_to_project(@user1, @project, Role.generate!(:permissions => [:view_issues, :add_issues, :edit_issues]))
 
       login_as
